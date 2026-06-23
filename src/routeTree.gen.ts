@@ -10,20 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as CreatorIdRouteImport } from './routes/creator.$id'
 import { Route as DashboardCollectionIdRouteImport } from './routes/dashboard.collection.$id'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -36,40 +31,45 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CreatorIdRoute = CreatorIdRouteImport.update({
   id: '/creator/$id',
   path: '/creator/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardCollectionIdRoute = DashboardCollectionIdRouteImport.update({
-  id: '/collection/$id',
-  path: '/collection/$id',
-  getParentRoute: () => DashboardRoute,
+  id: '/dashboard/collection/$id',
+  path: '/dashboard/collection/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/creator/$id': typeof CreatorIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/collection/$id': typeof DashboardCollectionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/creator/$id': typeof CreatorIdRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/dashboard/collection/$id': typeof DashboardCollectionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/creator/$id': typeof CreatorIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/collection/$id': typeof DashboardCollectionIdRoute
 }
 export interface FileRouteTypes {
@@ -77,34 +77,35 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/onboarding'
     | '/creator/$id'
+    | '/dashboard/'
     | '/dashboard/collection/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/onboarding'
     | '/creator/$id'
+    | '/dashboard'
     | '/dashboard/collection/$id'
   id:
     | '__root__'
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/onboarding'
     | '/creator/$id'
+    | '/dashboard/'
     | '/dashboard/collection/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   CreatorIdRoute: typeof CreatorIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardCollectionIdRoute: typeof DashboardCollectionIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -114,13 +115,6 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -137,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/creator/$id': {
       id: '/creator/$id'
       path: '/creator/$id'
@@ -146,32 +147,21 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/collection/$id': {
       id: '/dashboard/collection/$id'
-      path: '/collection/$id'
+      path: '/dashboard/collection/$id'
       fullPath: '/dashboard/collection/$id'
       preLoaderRoute: typeof DashboardCollectionIdRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface DashboardRouteChildren {
-  DashboardCollectionIdRoute: typeof DashboardCollectionIdRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardCollectionIdRoute: DashboardCollectionIdRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  DashboardRoute: DashboardRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   CreatorIdRoute: CreatorIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardCollectionIdRoute: DashboardCollectionIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

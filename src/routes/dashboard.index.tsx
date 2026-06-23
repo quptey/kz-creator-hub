@@ -16,7 +16,7 @@ import { CATEGORIES, CATEGORY_LABELS, CITIES, FOLLOWER_RANGES, type Category, ty
 import { toast } from "sonner";
 import type { TablesUpdate } from "@/integrations/supabase/types";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/dashboard/")({
   head: () => ({ meta: [{ title: "Dashboard — creator·kz" }] }),
   component: Dashboard,
 });
