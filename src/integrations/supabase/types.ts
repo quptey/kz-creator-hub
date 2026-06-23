@@ -14,7 +14,184 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      brand_requests: {
+        Row: {
+          brand_name: string
+          budget_range: Database["public"]["Enums"]["budget_range"]
+          contact_person: string
+          created_at: string
+          creator_id: string
+          id: string
+          message: string
+          sender_id: string | null
+        }
+        Insert: {
+          brand_name: string
+          budget_range: Database["public"]["Enums"]["budget_range"]
+          contact_person: string
+          created_at?: string
+          creator_id: string
+          id?: string
+          message: string
+          sender_id?: string | null
+        }
+        Update: {
+          brand_name?: string
+          budget_range?: Database["public"]["Enums"]["budget_range"]
+          contact_person?: string
+          created_at?: string
+          creator_id?: string
+          id?: string
+          message?: string
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_requests_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          creator_id: string
+          description: string | null
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collections_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          collection_id: string
+          created_at: string
+          creator_id: string
+          external_link: string | null
+          id: string
+          image_url: string | null
+          name: string
+          position: number
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string
+          creator_id: string
+          external_link?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          position?: number
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string
+          creator_id?: string
+          external_link?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          brand_name: string | null
+          category: Database["public"]["Enums"]["creator_category"] | null
+          city: Database["public"]["Enums"]["kz_city"] | null
+          contact_person: string | null
+          created_at: string
+          display_name: string
+          follower_range: Database["public"]["Enums"]["follower_range"] | null
+          id: string
+          onboarded: boolean
+          role: Database["public"]["Enums"]["user_role"]
+          social_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          brand_name?: string | null
+          category?: Database["public"]["Enums"]["creator_category"] | null
+          city?: Database["public"]["Enums"]["kz_city"] | null
+          contact_person?: string | null
+          created_at?: string
+          display_name?: string
+          follower_range?: Database["public"]["Enums"]["follower_range"] | null
+          id: string
+          onboarded?: boolean
+          role?: Database["public"]["Enums"]["user_role"]
+          social_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          brand_name?: string | null
+          category?: Database["public"]["Enums"]["creator_category"] | null
+          city?: Database["public"]["Enums"]["kz_city"] | null
+          contact_person?: string | null
+          created_at?: string
+          display_name?: string
+          follower_range?: Database["public"]["Enums"]["follower_range"] | null
+          id?: string
+          onboarded?: boolean
+          role?: Database["public"]["Enums"]["user_role"]
+          social_link?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +200,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      budget_range: "< 100K KZT" | "100K-500K KZT" | "500K-1M KZT" | "1M+ KZT"
+      creator_category:
+        | "beauty"
+        | "fashion"
+        | "fitness"
+        | "food"
+        | "lifestyle"
+        | "tech"
+      follower_range: "1K-10K" | "10K-50K" | "50K-200K" | "200K+"
+      kz_city: "Almaty" | "Astana" | "Shymkent" | "Aktau"
+      user_role: "creator" | "brand"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +337,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      budget_range: ["< 100K KZT", "100K-500K KZT", "500K-1M KZT", "1M+ KZT"],
+      creator_category: [
+        "beauty",
+        "fashion",
+        "fitness",
+        "food",
+        "lifestyle",
+        "tech",
+      ],
+      follower_range: ["1K-10K", "10K-50K", "50K-200K", "200K+"],
+      kz_city: ["Almaty", "Astana", "Shymkent", "Aktau"],
+      user_role: ["creator", "brand"],
+    },
   },
 } as const
