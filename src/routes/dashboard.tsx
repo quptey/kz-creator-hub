@@ -231,8 +231,6 @@ function Dashboard() {
   );
 }
 
-type ProfileRow = NonNullable<Awaited<ReturnType<typeof supabase.from<"profiles", never>["select"]>>["data"]> extends Array<infer T> ? T : never;
-
 function ProfileEditor({ profile, onSaved }: { profile: any; onSaved: () => void }) {
   const isCreator = profile.role === "creator";
   const [name, setName] = useState(profile.display_name ?? "");
