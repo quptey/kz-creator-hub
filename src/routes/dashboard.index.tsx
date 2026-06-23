@@ -226,7 +226,6 @@ function Dashboard() {
           </form>
         </DialogContent>
       </Dialog>
-      <Outlet />
     </div>
   );
 }
