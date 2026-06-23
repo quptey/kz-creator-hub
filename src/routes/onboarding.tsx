@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,7 +64,7 @@ function Onboarding() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const payload: Record<string, unknown> = {
+    const payload: TablesUpdate<"profiles"> = {
       display_name: name,
       bio,
       avatar_url: avatar,
