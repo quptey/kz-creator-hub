@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_links: {
+        Row: {
+          code: string | null
+          created_at: string
+          creator_id: string
+          id: string
+          product_id: string | null
+          url: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          creator_id: string
+          id?: string
+          product_id?: string | null
+          url: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          creator_id?: string
+          id?: string
+          product_id?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_links_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brand_requests: {
         Row: {
           brand_name: string
@@ -24,6 +59,7 @@ export type Database = {
           id: string
           message: string
           sender_id: string | null
+          status: Database["public"]["Enums"]["request_status"]
         }
         Insert: {
           brand_name: string
@@ -34,6 +70,7 @@ export type Database = {
           id?: string
           message: string
           sender_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
         }
         Update: {
           brand_name?: string
@@ -44,6 +81,7 @@ export type Database = {
           id?: string
           message?: string
           sender_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
         }
         Relationships: [
           {
@@ -54,6 +92,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      campaigns: {
+        Row: {
+          brand_id: string
+          brief: string | null
+          budget_range: string | null
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          brand_id: string
+          brief?: string | null
+          budget_range?: string | null
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          brand_id?: string
+          brief?: string | null
+          budget_range?: string | null
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       collections: {
         Row: {
@@ -92,6 +163,125 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          brand_id: string
+          code: string
+          created_at: string
+          discount_percent: number
+          id: string
+        }
+        Insert: {
+          active?: boolean
+          brand_id: string
+          code: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+        }
+        Update: {
+          active?: boolean
+          brand_id?: string
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+        }
+        Relationships: []
+      }
+      link_clicks: {
+        Row: {
+          affiliate_link_id: string
+          created_at: string
+          id: string
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_link_id: string
+          created_at?: string
+          id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_link_id?: string
+          created_at?: string
+          id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_clicks_affiliate_link_id_fkey"
+            columns: ["affiliate_link_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
@@ -143,6 +333,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approved: boolean
           avatar_url: string | null
           bio: string | null
           brand_name: string | null
@@ -153,12 +344,16 @@ export type Database = {
           display_name: string
           follower_range: Database["public"]["Enums"]["follower_range"] | null
           id: string
+          instagram_url: string | null
+          locale: string
           onboarded: boolean
           role: Database["public"]["Enums"]["user_role"]
           social_link: string | null
+          tiktok_url: string | null
           updated_at: string
         }
         Insert: {
+          approved?: boolean
           avatar_url?: string | null
           bio?: string | null
           brand_name?: string | null
@@ -169,12 +364,16 @@ export type Database = {
           display_name?: string
           follower_range?: Database["public"]["Enums"]["follower_range"] | null
           id: string
+          instagram_url?: string | null
+          locale?: string
           onboarded?: boolean
           role?: Database["public"]["Enums"]["user_role"]
           social_link?: string | null
+          tiktok_url?: string | null
           updated_at?: string
         }
         Update: {
+          approved?: boolean
           avatar_url?: string | null
           bio?: string | null
           brand_name?: string | null
@@ -185,10 +384,55 @@ export type Database = {
           display_name?: string
           follower_range?: Database["public"]["Enums"]["follower_range"] | null
           id?: string
+          instagram_url?: string | null
+          locale?: string
           onboarded?: boolean
           role?: Database["public"]["Enums"]["user_role"]
           social_link?: string | null
+          tiktok_url?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      saved_creators: {
+        Row: {
+          brand_id: string
+          created_at: string
+          creator_id: string
+          id: string
+        }
+        Insert: {
+          brand_id: string
+          created_at?: string
+          creator_id: string
+          id?: string
+        }
+        Update: {
+          brand_id?: string
+          created_at?: string
+          creator_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -197,10 +441,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["user_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       budget_range: "< 100K KZT" | "100K-500K KZT" | "500K-1M KZT" | "1M+ KZT"
+      campaign_status: "draft" | "active" | "closed"
       creator_category:
         | "beauty"
         | "fashion"
@@ -210,6 +461,7 @@ export type Database = {
         | "tech"
       follower_range: "1K-10K" | "10K-50K" | "50K-200K" | "200K+"
       kz_city: "Almaty" | "Astana" | "Shymkent" | "Aktau"
+      request_status: "pending" | "accepted" | "rejected"
       user_role: "creator" | "brand" | "admin"
     }
     CompositeTypes: {
@@ -339,6 +591,7 @@ export const Constants = {
   public: {
     Enums: {
       budget_range: ["< 100K KZT", "100K-500K KZT", "500K-1M KZT", "1M+ KZT"],
+      campaign_status: ["draft", "active", "closed"],
       creator_category: [
         "beauty",
         "fashion",
@@ -349,6 +602,7 @@ export const Constants = {
       ],
       follower_range: ["1K-10K", "10K-50K", "50K-200K", "200K+"],
       kz_city: ["Almaty", "Astana", "Shymkent", "Aktau"],
+      request_status: ["pending", "accepted", "rejected"],
       user_role: ["creator", "brand", "admin"],
     },
   },
