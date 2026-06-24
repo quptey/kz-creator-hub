@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Plus, Trash2, Pencil, Inbox, FolderOpen, UserCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -25,6 +26,7 @@ function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth", search: { mode: "signin" } });
@@ -67,6 +69,13 @@ function Dashboard() {
       return data ?? [];
     },
   });
+
+  async function setStatus(id: string, status: "accepted" | "rejected") {
+    const { error } = await supabase.from("brand_requests").update({ status }).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success(status === "accepted" ? t("toasts.requestAccepted") : t("toasts.requestRejected"));
+    qc.invalidateQueries({ queryKey: ["my-requests"] });
+  }
 
   const [newColOpen, setNewColOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -174,10 +183,10 @@ function Dashboard() {
           )}
 
           <TabsContent value="requests" className="space-y-4">
-            <h2 className="font-display text-2xl font-semibold">Brand requests</h2>
+            <h2 className="font-display text-2xl font-semibold">{t("dashboard.requests")}</h2>
             {requests.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-border bg-card p-16 text-center text-muted-foreground">
-                No requests yet. {isCreator && "Brands will reach out once they discover your collections."}
+                {t("dashboard.noRequests")} {isCreator && t("dashboard.noRequestsHint")}
               </div>
             ) : (
               <div className="space-y-3">
@@ -191,9 +200,16 @@ function Dashboard() {
                       <div className="flex flex-col items-end gap-1 text-right">
                         <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">{r.budget_range}</span>
                         <span className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</span>
+                        <span className="mt-1 rounded-full bg-secondary px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">{r.status}</span>
                       </div>
                     </div>
                     <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed">{r.message}</p>
+                    {isCreator && r.status === "pending" && (
+                      <div className="mt-4 flex gap-2">
+                        <Button size="sm" onClick={() => setStatus(r.id, "accepted")}>{t("dashboard.accept")}</Button>
+                        <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "rejected")}>{t("dashboard.reject")}</Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

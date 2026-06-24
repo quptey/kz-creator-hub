@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +21,7 @@ export function ContactCreatorDialog({
   creatorName: string;
 }) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [brand, setBrand] = useState("");
   const [contact, setContact] = useState("");
@@ -46,7 +48,7 @@ export function ContactCreatorDialog({
     });
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Request sent. The creator will be notified.");
+    toast.success(t("contact.sent"));
     onOpenChange(false);
     setBrand(""); setContact(""); setBudget(""); setMessage("");
   }
@@ -55,22 +57,22 @@ export function ContactCreatorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-2xl">Contact {creatorName}</DialogTitle>
-          <DialogDescription>Share a few details about your collaboration.</DialogDescription>
+          <DialogTitle className="font-display text-2xl">{t("contact.title", { name: creatorName })}</DialogTitle>
+          <DialogDescription>{t("contact.subtitle")}</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="brand">Brand name</Label>
+            <Label htmlFor="brand">{t("contact.brand")}</Label>
             <Input id="brand" required value={brand} onChange={(e) => setBrand(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="contact">Contact person</Label>
+            <Label htmlFor="contact">{t("contact.contactPerson")}</Label>
             <Input id="contact" required value={contact} onChange={(e) => setContact(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>Budget range</Label>
+            <Label>{t("contact.budget")}</Label>
             <Select value={budget} onValueChange={(v) => setBudget(v as BudgetRange)}>
-              <SelectTrigger><SelectValue placeholder="Pick a range" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("contact.pickRange")} /></SelectTrigger>
               <SelectContent>
                 {BUDGET_RANGES.map((b) => (
                   <SelectItem key={b} value={b}>{b}</SelectItem>
@@ -79,11 +81,11 @@ export function ContactCreatorDialog({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="message">Message</Label>
+            <Label htmlFor="message">{t("contact.message")}</Label>
             <Textarea id="message" required rows={4} value={message} onChange={(e) => setMessage(e.target.value)} />
           </div>
           <Button type="submit" disabled={submitting || !budget} className="w-full">
-            {submitting ? "Sending…" : "Send request"}
+            {submitting ? t("contact.sending") : t("contact.send")}
           </Button>
         </form>
       </DialogContent>
