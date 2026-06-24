@@ -210,7 +210,7 @@ export type Database = {
         | "tech"
       follower_range: "1K-10K" | "10K-50K" | "50K-200K" | "200K+"
       kz_city: "Almaty" | "Astana" | "Shymkent" | "Aktau"
-      user_role: "creator" | "brand"
+      user_role: "creator" | "brand" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -349,7 +349,7 @@ export const Constants = {
       ],
       follower_range: ["1K-10K", "10K-50K", "50K-200K", "200K+"],
       kz_city: ["Almaty", "Astana", "Shymkent", "Aktau"],
-      user_role: ["creator", "brand"],
+      user_role: ["creator", "brand", "admin"],
     },
   },
 } as const
