@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { CreatorCard } from "@/components/creator-card";
@@ -13,9 +14,9 @@ import { CATEGORIES, CATEGORY_LABELS, CITIES, FOLLOWER_RANGES, type Category, ty
 export const Route = createFileRoute("/marketplace")({
   head: () => ({
     meta: [
-      { title: "Discover Kazakhstan's creators — creator·kz" },
-      { name: "description", content: "An editorial marketplace where creators publish curated collections and brands discover collaborators across Kazakhstan." },
-      { property: "og:title", content: "creator·kz — discover Kazakhstan's creators" },
+      { title: "Marketplace — creator·kz" },
+      { name: "description", content: "Discover Kazakhstan creators across beauty, fashion, fitness, food, lifestyle and tech." },
+      { property: "og:title", content: "creator·kz — marketplace" },
       { property: "og:description", content: "Curated creator collections from Almaty, Astana, Shymkent & Aktau." },
     ],
   }),
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/marketplace")({
 });
 
 function Marketplace() {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<Category | "all">("all");
   const [city, setCity] = useState<City | "all">("all");
@@ -33,104 +35,69 @@ function Marketplace() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, display_name, bio, avatar_url, category, city, follower_range, onboarded, role")
+        .select("id, display_name, bio, avatar_url, category, city, follower_range, role, approved, onboarded")
         .eq("role", "creator")
         .eq("onboarded", true)
+        .eq("approved", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
   });
 
-  const filtered = useMemo(() => {
-    return creators.filter((c) => {
-      if (category !== "all" && c.category !== category) return false;
-      if (city !== "all" && c.city !== city) return false;
-      if (followers !== "all" && c.follower_range !== followers) return false;
-      if (q && !c.display_name.toLowerCase().includes(q.toLowerCase()) && !(c.bio ?? "").toLowerCase().includes(q.toLowerCase()))
-        return false;
-      return true;
-    });
-  }, [creators, category, city, followers, q]);
+  const filtered = useMemo(() => creators.filter((c) => {
+    if (category !== "all" && c.category !== category) return false;
+    if (city !== "all" && c.city !== city) return false;
+    if (followers !== "all" && c.follower_range !== followers) return false;
+    if (q && !c.display_name.toLowerCase().includes(q.toLowerCase()) && !(c.bio ?? "").toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  }), [creators, category, city, followers, q]);
 
   const hasFilters = category !== "all" || city !== "all" || followers !== "all" || q.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-cream via-background to-warm" />
-        <div className="mx-auto max-w-7xl px-6 pb-20 pt-20 sm:pt-28">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Kazakhstan · MVP
-            </span>
-            <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
-              An editorial marketplace for <em className="font-display italic text-accent">Kazakhstan's</em> creators.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Creators publish curated collections. Brands discover collaborators. No middlemen, no noise — just good taste.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/auth" search={{ mode: "signup" }}>
-                <Button size="lg" className="rounded-full px-6">Become a creator</Button>
-              </Link>
-              <a href="#discover">
-                <Button size="lg" variant="outline" className="rounded-full px-6">Browse creators</Button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Filters */}
-      <section id="discover" className="mx-auto max-w-7xl px-6 py-14">
+      <section className="mx-auto max-w-7xl px-6 py-14">
         <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">The Directory</p>
-            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">Discover creators</h2>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{t("marketplace.eyebrow")}</p>
+            <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">{t("marketplace.title")}</h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            {isLoading ? "Loading…" : `${filtered.length} ${filtered.length === 1 ? "creator" : "creators"}`}
+            {isLoading ? t("common.loading") : `${filtered.length} ${filtered.length === 1 ? t("marketplace.creator") : t("marketplace.creators")}`}
           </p>
         </div>
 
         <div className="mb-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_180px_180px_180px_auto]">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search creators…"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              className="pl-9"
-            />
+            <Input placeholder={t("marketplace.searchPlaceholder")} value={q} onChange={(e) => setQ(e.target.value)} className="pl-9" />
           </div>
           <Select value={category} onValueChange={(v) => setCategory(v as Category | "all")}>
-            <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("marketplace.category")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
+              <SelectItem value="all">{t("marketplace.allCategories")}</SelectItem>
               {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{CATEGORY_LABELS[c]}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={city} onValueChange={(v) => setCity(v as City | "all")}>
-            <SelectTrigger><SelectValue placeholder="City" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("marketplace.city")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All cities</SelectItem>
+              <SelectItem value="all">{t("marketplace.allCities")}</SelectItem>
               {CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={followers} onValueChange={(v) => setFollowers(v as FollowerRange | "all")}>
-            <SelectTrigger><SelectValue placeholder="Followers" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("marketplace.followers")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All sizes</SelectItem>
+              <SelectItem value="all">{t("marketplace.allSizes")}</SelectItem>
               {FOLLOWER_RANGES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
           {hasFilters && (
             <Button variant="ghost" onClick={() => { setQ(""); setCategory("all"); setCity("all"); setFollowers("all"); }}>
-              Clear
+              {t("marketplace.clear")}
             </Button>
           )}
         </div>
@@ -143,8 +110,8 @@ function Marketplace() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-border bg-card p-16 text-center">
-            <p className="font-display text-2xl text-foreground">No creators match those filters yet.</p>
-            <p className="mt-2 text-sm text-muted-foreground">Try clearing them or come back soon — we're just getting started.</p>
+            <p className="font-display text-2xl text-foreground">{t("marketplace.empty")}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("marketplace.emptyHint")}</p>
           </div>
         ) : (
           <div className="editorial-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -163,13 +130,6 @@ function Marketplace() {
           </div>
         )}
       </section>
-
-      <footer className="border-t border-border py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-6 text-sm text-muted-foreground sm:flex-row sm:items-center">
-          <span className="font-display text-base text-foreground">creator·kz</span>
-          <span>© {new Date().getFullYear()} — Built for Kazakhstan creators.</span>
-        </div>
-      </footer>
     </div>
   );
 }
