@@ -1,10 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { NotificationsBell } from "@/components/notifications-bell";
 
 export function SiteHeader() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
@@ -20,21 +24,23 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
           <Link to="/" activeProps={{ className: "text-foreground" }} activeOptions={{ exact: true }} className="transition-colors hover:text-foreground">
-            Discover
+            {t("nav.home")}
+          </Link>
+          <Link to="/marketplace" activeProps={{ className: "text-foreground" }} className="transition-colors hover:text-foreground">
+            {t("nav.marketplace")}
           </Link>
           {user && (
             <Link to="/dashboard" activeProps={{ className: "text-foreground" }} className="transition-colors hover:text-foreground">
-              Dashboard
+              {t("nav.dashboard")}
             </Link>
           )}
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <NotificationsBell />
           {user ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/dashboard" })}>
-                Dashboard
-              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -43,16 +49,16 @@ export function SiteHeader() {
                   navigate({ to: "/" });
                 }}
               >
-                Sign out
+                {t("nav.signOut")}
               </Button>
             </>
           ) : (
             <>
               <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/auth", search: { mode: "signin" } })}>
-                Sign in
+                {t("nav.signIn")}
               </Button>
               <Button size="sm" onClick={() => navigate({ to: "/auth", search: { mode: "signup" } })}>
-                Join as creator
+                {t("nav.getStarted")}
               </Button>
             </>
           )}

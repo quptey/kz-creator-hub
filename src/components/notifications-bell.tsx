@@ -6,7 +6,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { Link } from "@tanstack/react-router";
 
 export function NotificationsBell() {
   const { user } = useAuth();
@@ -73,9 +72,9 @@ export function NotificationsBell() {
             <p className="p-6 text-center text-sm text-muted-foreground">{t("notifications.empty")}</p>
           ) : (
             items.map((n) => (
-              <Link
+              <a
                 key={n.id}
-                to={n.link || "/dashboard"}
+                href={n.link || "/dashboard"}
                 onClick={() => setOpen(false)}
                 className={`block border-b border-border/60 px-3 py-3 text-sm last:border-b-0 hover:bg-secondary/40 ${n.read_at ? "opacity-60" : ""}`}
               >
@@ -84,7 +83,7 @@ export function NotificationsBell() {
                 <p className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
                   {new Date(n.created_at).toLocaleDateString()}
                 </p>
-              </Link>
+              </a>
             ))
           )}
         </div>
