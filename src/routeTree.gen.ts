@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +17,11 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as CreatorIdRouteImport } from './routes/creator.$id'
 import { Route as DashboardCollectionIdRouteImport } from './routes/dashboard.collection.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/creator/$id': typeof CreatorIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/collection/$id': typeof DashboardCollectionIdRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/creator/$id': typeof CreatorIdRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/collection/$id': typeof DashboardCollectionIdRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/creator/$id': typeof CreatorIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/collection/$id': typeof DashboardCollectionIdRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/sitemap.xml'
     | '/creator/$id'
     | '/dashboard/'
     | '/dashboard/collection/$id'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/sitemap.xml'
     | '/creator/$id'
     | '/dashboard'
     | '/dashboard/collection/$id'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/sitemap.xml'
     | '/creator/$id'
     | '/dashboard/'
     | '/dashboard/collection/$id'
@@ -103,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   OnboardingRoute: typeof OnboardingRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   CreatorIdRoute: typeof CreatorIdRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardCollectionIdRoute: typeof DashboardCollectionIdRoute
@@ -110,6 +123,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -159,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   OnboardingRoute: OnboardingRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   CreatorIdRoute: CreatorIdRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardCollectionIdRoute: DashboardCollectionIdRoute,
