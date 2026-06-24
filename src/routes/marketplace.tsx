@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_LABELS, CITIES, FOLLOWER_RANGES, type Category, type City, type FollowerRange } from "@/lib/constants";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/marketplace")({
   head: () => ({
     meta: [
       { title: "Discover Kazakhstan's creators — creator·kz" },
